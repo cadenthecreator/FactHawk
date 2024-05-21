@@ -1,7 +1,7 @@
 streamlit
 moviepy
 openai
-whisper
+openai-whisper
 gTTS
 pinecone
 summa
