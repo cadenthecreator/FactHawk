@@ -1,0 +1,9 @@
+streamlit
+moviepy
+openai
+whisper
+gTTS
+pinecone
+summa
+beautifulsoup4
+sentence_transformers
