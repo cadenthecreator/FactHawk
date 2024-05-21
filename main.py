@@ -88,6 +88,7 @@ def factcheck(claim: str,transcript=None):
 def makevideo(input: str,transcript=None):
     matches = get_similar(input,index_name)
     article = ""
+    yield "Gathering Data..."
     for i in matches:
         if i['score'] > 0.6:
             url = i['metadata']['url']
@@ -96,6 +97,7 @@ def makevideo(input: str,transcript=None):
             article += "\n"+content+"\nArticle from: "+url+"\n"
 
     tran = ""
+    yield "Generating Script..."
     if transcript is not None:
         tran = "\n\nThere was a video attached this is the transcript please mention this as a source and talk about it: \n"+transcript
 
@@ -118,10 +120,11 @@ def makevideo(input: str,transcript=None):
     frequency_penalty=0,
     presence_penalty=0
     )
+    yield "Starting Video Generation..."
     sections = response.choices[0].message.content.split("[sect]")
     sections.pop(0)
     clips = []
-    for section in sections:
+    for ind,section in enumerate(sections):
         print(section)
         print("Started clip generation for section:", section)
         audio_filename = "ttstmp.mp3"
@@ -143,7 +146,8 @@ def makevideo(input: str,transcript=None):
 
         os.remove(audio_filename)
         print("Removed temporary audio file for section:", section)
-
+        yield "Created section "+str(ind+1)+"/"+str(len(sections))
+    yield "Rendering video..."
     outvid = mp.concatenate_videoclips(clips, method="compose")
     outvid.write_videofile("ai.mp4", fps=24)
 def upload(link: str,name: str):
@@ -195,8 +199,9 @@ with ask:
             os.remove("tmp.mp3")
         st.write_stream(factcheck(input,transcript))
         if make_video:
-            with st.spinner('Generating Video'):
-                makevideo(input,transcript)
+            with st.status('Generating Video', expanded=True):
+                for i in makevideo(input,transcript):
+                    st.write(i)
                 st.video("ai.mp4")
 
 with submit:
