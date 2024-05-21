@@ -11,10 +11,10 @@ from summa.summarizer import summarize
 import requests
 from bs4 import BeautifulSoup 
 
-pc = Pinecone(api_key="464df748-b273-4a43-a2ed-72cbfef69d1b")
+pc = Pinecone(api_key=DB_TOKEN)
 
 index_name = "truthspace-index"
-client = OpenAI(api_key="sk-proj-lEt2FypZpqsb0XX9dsU8T3BlbkFJbwfZ2pvJIA1un1gxSbGq")
+client = OpenAI(api_key=AI_TOKEN)
 if index_name not in pc.list_indexes().names():
   pc.create_index(
       name=index_name,
